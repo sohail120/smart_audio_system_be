@@ -10,7 +10,11 @@ def create_app(config_class=Config):
     api.init_app(app)
     
     # Import and register namespaces
-    from app.resources import items
+    from app.resources import items ,upload_file
+
+    
     api.add_namespace(items.items_ns)
+    api.add_namespace(upload_file.upload_file_ns)
+
     
     return app
