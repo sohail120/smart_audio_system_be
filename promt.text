@@ -1,0 +1,53 @@
+Problem Statement:
+    Development of a robust System for Language-Agnostic Speaker Identification/Verification and Diarization; and subsequent Transcription & Translation of the multilingual and code-switched audio.
+    PS Description:
+    We aim to develop an integrated audio processing system that transforms spoken audio into structured, multilingual and textual insights. Given an input audio file, the system will perform the following tasks :-
+    Speaker Identification:
+    Match each speaker segment to a known identity when enrolment data is available.
+    Speaker Diarization:
+    Segment the audio by identifying boundary between different speakers.
+    Language Identification:
+    Detect the language spoken in each segment, supporting multilingual and code-switched audio.
+    Automatic Speech Recognition:
+    Convert each speaker’s speech into accurate text in spoken script.
+    Neural Machine Translation:
+    Translate the transcribed text into English language, preserving speaker level segmentation.
+    
+    The solution should be able to handle:
+    Sample rate – 8k – 48 k
+    Bit depth : 4 - 32 bits
+    File types : wav, mp3, ogg, flac etc.
+    SNR : -5 to 20 db
+
+    Instructions for Accessing the Problem Statement Document:
+
+    1. All interested participants must fill this Problem Statement Access Form to view the detailed problem statement.
+
+    2. The form requires verification of your mobile number via OTP. You must enter a valid Indian mobile number to receive and authenticate the OTP. Only verified users will be allowed to proceed.
+
+    3. Upon successful verification, you will be able to select the problem statements, and their descriptions will become visible on the confirmation screen.
+
+    4. The detailed information about the datasets and evaluation criteria will be published prior to 31st July, 2025.
+
+    5. Broad indicators for datasets at each stage are as below: -
+
+    Stage 1: The datasets will largely be from open source. In certain PS, source URLs will be provided.
+
+    Stage 2: The datasets will remain from open source. Synthetic data may be provided for a few PS. Variety and scale of data will be larger in Stage-2.
+
+    Stage 3: Organisation specific data will be provisioned at the on-premise incubation centre in majority of the PS. Following PS will, however, continue over Open source data: -
+
+    6. The evaluation at each stage will be done by a committee of independent juries with a composition of experts from NCIIPC and Academia.
+
+    7. Broad indicators for evaluation at each stage are as below: -
+
+    Stage 1: Understanding of the Problem Statement, Approach adopted, Proposed architecture, Technical capabilities of the team, Ability of the team to complete overall objectives and Interview by the expert panel
+
+    Stage 2: Architecture of the solution, Accuracy of the solution, Efficiency of the solution in terms of resources usage, time taken etc
+
+    Stage 3: Accuracy of the solution, Efficiency as above in stage 2, Completeness of the solution and Scalability of the solution
+
+    8. Updates will be published to all participants from time to time over this portal.
+
+
+explain me
