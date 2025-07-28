@@ -8,3 +8,6 @@ API endpoints: http://localhost:5000/items/
 
 Swagger UI: http://localhost:5000/swagger/
 pip freeze > requirements.txt
+
+flask db migrate -m "your message here"
+flask db upgrade
