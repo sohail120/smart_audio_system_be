@@ -1,0 +1,21 @@
+{
+  "id": "9d71455c-88fe-4c14-8845-346e99fa018a",
+  "totalSpeakers": 2,
+  "segment": [
+    {
+      "speaker": "SPEAKER_00",
+      "start": 2629,
+      "end": 6291
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start": 7118,
+      "end": 8974
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start": 9885,
+      "end": 9970
+    }
+  ]
+}

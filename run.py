@@ -7,11 +7,19 @@ from flask_restx import Api, Resource, fields, Namespace
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
+import threading
+from services.speech_recognition_service import speech_recognition_service
+from services.speaker_identification_service import speaker_identification_service
+from services.speaker_diarization_service import speaker_diarization_service
+
+
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv', 'pdf', 'docx', 'jpg', 'png'}
 JSON_STORAGE = 'files.json'
+HF_TOKEN = "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"
+AUDIO_PATH = "s2.wav"  # or "sample.wav"
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -88,12 +96,10 @@ class FileList(Resource):
         if not uploaded_file or uploaded_file.filename == '':
             ns.abort(400, 'No file selected')
 
-        # if not allowed_file(uploaded_file.filename):
-        #     ns.abort(415, 'File type not allowed')
 
         file_id = str(uuid.uuid4())
         filename = secure_filename(uploaded_file.filename)
-        local_path = get_local_file_path(filename)
+        local_path = get_local_file_path(f'{file_id}-{filename}')
 
         uploaded_file.save(local_path)
 
@@ -170,8 +176,9 @@ class SpeakerIdentification(Resource):
 
         # No longer checking for request.json
         files[file_index]['status'] = 1
+        thread = threading.Thread(target=speaker_identification_service, args=(file_id,HF_TOKEN,))
+        thread.start()
         save_files(files)
-
         return files[file_index]
 
 @ns.route('/speaker-diarization/<string:file_id>')
@@ -186,6 +193,9 @@ class SpeakerDiarization(Resource):
         # No longer checking for request.json
         files[file_index]['status'] = 3
         save_files(files)
+        thread = threading.Thread(target=speaker_diarization_service, args=(file_id,))
+        thread.start()
+     
 
         return files[file_index]
 
@@ -198,10 +208,10 @@ class SpeechRecognition(Resource):
         if file_index is None:
             ns.abort(404, 'File not found')
 
-        # No longer checking for request.json
         files[file_index]['status'] = 5
         save_files(files)
-
+        thread = threading.Thread(target=speech_recognition_service, args=(file_id,))
+        thread.start()
         return files[file_index]
 
 @ns.route('/language-identification/<string:file_id>')
@@ -214,7 +224,10 @@ class LanguageIdentification(Resource):
             ns.abort(404, 'File not found')
 
         # No longer checking for request.json
-        files[file_index]['status'] = 7
+        # files[file_index]['status'] = 7
+        files[file_index]['status'] = 8
+
+
         save_files(files)
 
         return files[file_index]
@@ -256,7 +269,7 @@ def serve_uploaded_file(filename):
 
 @app.route('/')
 def index():
-    return 'File Management API is running. Visit /swagger.json or /docs if enabled.'
+    return 'Smart Audio System API is running. Visit /swagger.json or /docs if enabled.'
 
 
 if __name__ == '__main__':
