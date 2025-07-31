@@ -11,7 +11,7 @@ import threading
 from services.speech_recognition_service import speech_recognition_service
 from services.speaker_identification_service import speaker_identification_service
 from services.speaker_diarization_service import speaker_diarization_service
-
+from utils import load_files, save_files
 
 
 # Configuration
@@ -46,6 +46,19 @@ file_model = ns.model('File', {
     'url': fields.String(readonly=True, description='Local file path')
 })
 
+result_model = ns.model('Result', {
+    'id': fields.String(readonly=True, description='The unique identifier of the result'),
+    'totalSpeakers': fields.Integer(required=True, description='Total number of speakers in the audio'),
+    'segment': fields.List(fields.Nested(ns.model('Segment', {
+        'speaker': fields.String(required=True, description='Speaker identifier', enum=['SPEAKER_00', 'SPEAKER_01']),
+        'start': fields.Integer(required=True, description='Start time of the segment in milliseconds'),
+        'end': fields.Integer(required=True, description='End time of the segment in milliseconds'),
+        'transcript': fields.String(required=True, description='Transcribed text'),
+        'language': fields.String(required=True, description='Language code of the transcript'),
+        'tranlate': fields.String(description='Translation of the transcript (if available)')
+    })), description='List of audio segments with speaker information')
+})
+
 upload_parser = ns.parser()
 upload_parser.add_argument('file', location='files',
                            type=FileStorage, required=True, help='The file to upload')
@@ -53,20 +66,6 @@ upload_parser.add_argument('name', location='form', required=True, help='Display
 upload_parser.add_argument('status', location='form', required=False, help='File processing status')
 
 
-# Helper Functions
-def load_files():
-    if not os.path.exists(JSON_STORAGE):
-        return []
-    try:
-        with open(JSON_STORAGE, 'r') as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        return []
-
-
-def save_files(files):
-    with open(JSON_STORAGE, 'w') as f:
-        json.dump(files, f, indent=2)
 
 
 def allowed_file(filename):
@@ -248,6 +247,33 @@ class NeuralTranslation(Resource):
 
         return files[file_index]
 
+@ns.route('/result/<string:file_id>')
+class Result(Resource):
+    @ns.marshal_with(result_model)
+    def get(self, file_id):
+        """Get transcription results for a specific file
+        
+        Args:
+            file_id (str): The unique identifier of the file to retrieve results for
+            
+        Returns:
+            The transcription result matching the model structure
+        """
+        try:
+            # Load the file with proper error handling
+            result_data = load_files(f'uploads/transcription-{file_id}.json')
+            
+            # Validate the loaded data matches our expected structure
+            if not all(key in result_data for key in ['id', 'totalSpeakers', 'segment']):
+                ns.abort(400, "Invalid data structure in the result file")
+                
+            return result_data
+            
+        except FileNotFoundError:
+            ns.abort(404, f"Result file with ID {file_id} not found")
+        except Exception as e:
+            ns.abort(500, f"Error processing request: {str(e)}")
+    
         
 @app.route('/download/<string:file_id>')
 def download_file(file_id):
