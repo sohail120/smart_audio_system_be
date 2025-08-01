@@ -18,8 +18,7 @@ from utils import load_files, save_files
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv', 'pdf', 'docx', 'jpg', 'png'}
 JSON_STORAGE = 'files.json'
-HF_TOKEN = ""
-AUDIO_PATH = "s2.wav"  # or "sample.wav"
+HF_TOKEN = "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"
 
 # Initialize Flask app
 app = Flask(__name__)

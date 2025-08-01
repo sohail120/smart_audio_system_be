@@ -52,10 +52,6 @@ def speaker_identification_service(file_id: str, HF_TOKEN: str) -> int:
 
     temp_file = None
     try:
-        if not audio_file_path.lower().endswith('.wav'):
-            print("Converting audio to WAV format...")
-            temp_file = "temp_converted.wav"
-            audio_file_path = convert_to_wav(audio_file_path, temp_file)
 
         if _PIPELINE is None:
             _PIPELINE = initialize_pipeline(HF_TOKEN)

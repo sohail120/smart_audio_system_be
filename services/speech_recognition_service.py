@@ -29,7 +29,7 @@ def speech_recognition_service(file_id: str) -> str:
         raise ValueError("No segments found in diarization JSON.")
 
     # Load Whisper model (adjust size as needed: base/small/medium/large)
-    model = whisper.load_model("base")
+    model = whisper.load_model("medium")
 
     # Transcribe each segment
     output_dir = "cropped_segments"
