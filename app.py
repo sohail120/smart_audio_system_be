@@ -1,6 +1,5 @@
 import os
 import uuid
-import json
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
 from flask_restx import Api, Resource, fields, Namespace
@@ -30,9 +29,13 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Flask-RESTX setup
-api = Api(app, version='1.0', title='File Management API',
-          description='A simple CRUD API for managing files with JSON storage')
-ns = Namespace('files', description='File operations')
+# Move Swagger UI from `/` to `/swagger`
+api = Api(app,
+          version='1.0',
+          title='Smart Audio System API',
+          description='API for Smart Audio System',
+          doc='/swagger') 
+ns = Namespace('files', description='Smart Audio System File Operations')
 api.add_namespace(ns, path='/files')
 
 # Swagger Models
@@ -298,4 +301,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)

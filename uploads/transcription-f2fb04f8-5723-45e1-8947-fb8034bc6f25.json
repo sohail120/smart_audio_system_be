@@ -1,0 +1,30 @@
+{
+  "id": "f2fb04f8-5723-45e1-8947-fb8034bc6f25",
+  "totalSpeakers": 2,
+  "segment": [
+    {
+      "speaker": "SPEAKER_00",
+      "start": 2629,
+      "end": 6291,
+      "transcript": "Hey guys, this is Rohit. I am going to speak against it.",
+      "language": "en",
+      "tranlate": "Hey guys, this is Rohit."
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start": 7118,
+      "end": 8974,
+      "transcript": "\u0939\u093e\u0908 \u092b\u094d\u0930\u0947\u0902\u091c\u094d\u091c\u094d\u091c\u0964 \u092f\u093e \u092e\u0948\u0902 \u0928\u093f\u0930\u094d\u091c\u093e\u0964",
+      "language": "hi",
+      "tranlate": "Hey, Franz, or I'm out."
+    },
+    {
+      "speaker": "SPEAKER_01",
+      "start": 9885,
+      "end": 9970,
+      "transcript": "",
+      "language": "en",
+      "tranlate": "I'm sorry."
+    }
+  ]
+}

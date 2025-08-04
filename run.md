@@ -11,3 +11,13 @@ pip freeze > requirements.txt
 
 flask db migrate -m "your message here"
 flask db upgrade
+
+
+
+docker build -t smart_audio_system_be .
+
+
+
+ 
+docker ps -a
+

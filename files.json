@@ -89,5 +89,12 @@
     "createdAt": "2025-07-31T05:43:16.194164Z",
     "status": 10,
     "url": "uploads\\f0a28ee9-5037-46bc-9d2a-f4f468eba203-output_cropped.wav"
+  },
+  {
+    "id": "f2fb04f8-5723-45e1-8947-fb8034bc6f25",
+    "name": "output_cropped",
+    "createdAt": "2025-08-01T11:11:58.491049Z",
+    "status": 10,
+    "url": "uploads\\f2fb04f8-5723-45e1-8947-fb8034bc6f25-output_cropped.wav"
   }
 ]

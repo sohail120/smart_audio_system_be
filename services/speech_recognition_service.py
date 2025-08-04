@@ -2,6 +2,7 @@ import whisper
 import os
 import json
 from utils import load_files, save_files
+from transformers import pipeline
 
 def speech_recognition_service(file_id: str) -> str:
     """
@@ -18,6 +19,8 @@ def speech_recognition_service(file_id: str) -> str:
 
     # Load speaker diarization data
     diarization_path = f"uploads/diarization-{file_id}.json"
+    translator = pipeline("translation", model="Helsinki-NLP/opus-mt-mul-en")
+
     if not os.path.exists(diarization_path):
         raise FileNotFoundError(f"Diarization file not found: {diarization_path}")
     
@@ -44,10 +47,11 @@ def speech_recognition_service(file_id: str) -> str:
 
         print(f"Transcribing: {cropped_audio_path}")
         result = model.transcribe(cropped_audio_path)
+        translation = translator(result.get("text", "").strip())
         print(f"Transcription result for segment {i+1}: {result}")
         segment["transcript"] = result.get("text", "").strip()
         segment["language"] = result.get("language", "").strip()
-
+        segment["tranlate"] =translation[0]['translation_text']
 
     # Save transcript-augmented JSON
     transcription_output_path = f"uploads/transcription-{file_id}.json"
@@ -60,13 +64,3 @@ def speech_recognition_service(file_id: str) -> str:
     save_files(files)
 
     return "ok"
-
-
-# # Replace with a valid file ID from your `files.json`
-# file_id = "7b4d034c-9a47-4912-bc1e-b25c2340388d"
-
-# # Call the transcription service
-# response = speech_recognition_service(file_id)
-
-# # Print the response
-# print(response)
