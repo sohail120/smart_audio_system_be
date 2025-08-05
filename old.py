@@ -22,14 +22,6 @@ HF_TOKEN = "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"
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app) 
-
-@app.route('/')
-def home():
-   return render_template('index.html')
-# <string:file_id>
-@app.route('/result-page')
-def result():
-   return render_template('result.html')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB/
 
@@ -87,38 +79,6 @@ def get_local_file_path(filename):
 
 
 # Routes
-@ns.route('/upload-file')
-class UploadFiles(Resource):
-    @ns.expect(upload_parser)
-    @ns.marshal_with(file_model, code=201)
-    def post(self):
-        """Upload a new file"""
-        args = upload_parser.parse_args()
-        uploaded_file = args['file']
-        name = args['name']
-
-        if not uploaded_file or uploaded_file.filename == '':
-            ns.abort(400, 'No file selected')
-
-
-        file_id = str(uuid.uuid4())
-        filename = secure_filename(uploaded_file.filename)
-        local_path = get_local_file_path(f'{file_id}-{filename}')
-
-        uploaded_file.save(local_path)
-
-        new_file = {
-            'id': file_id,
-            'name': name,
-            'createdAt': datetime.utcnow().isoformat() + 'Z',
-            'status': 0,
-            'url': local_path
-        }
-        files = load_files()
-        files.append(new_file)
-        save_files(files)
-
-        return new_file, 201
 @ns.route('/')
 class FileList(Resource):
     @ns.marshal_list_with(file_model)
@@ -335,7 +295,10 @@ def serve_uploaded_file(filename):
     """Serve any uploaded file directly by filename"""
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/')
+def home():
+   return render_template('index.html')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
