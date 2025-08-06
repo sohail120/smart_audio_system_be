@@ -407,21 +407,20 @@
                     }
                 };
                 
-                xhr.onload = function() {
+                xhr.onload = async function() {
                     uploadBtn.disabled = false;
                     uploadBtn.innerHTML = '<i class="fas fa-upload me-2"></i> Upload Audio';
                     
                     if (xhr.status === 201) {
-                        const response = JSON.parse(xhr.responseText);
+                        const response =await JSON.parse(xhr.responseText);
                         showMessage('Audio uploaded successfully!', 'success');
-                        // Reset form
                         fileInput.value = '';
                         filePreview.style.display = 'none';
                         document.getElementById('name').value = '';
                         document.getElementById('description').value = '';
                         audioPreview.src = '';
                         uploadProgress.style.display = 'none';
-                        window.location.href = "/result-page";
+                        window.location.href = "/result-page"+ '/' + response.id;
                     } else {
                         try {
                             const errorResponse = JSON.parse(xhr.responseText);

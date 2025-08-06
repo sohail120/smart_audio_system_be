@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Processing</title>
+    <title>File Processing</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,224 +18,182 @@
             margin: 0;
             padding: 20px;
         }
+
         .processing-container {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
             width: 100%;
-            max-width: 800px;
+            max-width: 500px;
+            text-align: center;
         }
-        .stage {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        .stage:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
+
         .progress {
             height: 10px;
-            margin: 15px 0;
+            margin: 20px 0;
         }
+
         .btn-download {
             background-color: #4361ee;
             color: white;
             font-weight: 600;
             padding: 8px 15px;
-            margin: 5px;
+            margin: 10px 5px;
             font-size: 14px;
         }
+
         .processing-icon {
-            font-size: 24px;
+            font-size: 40px;
             color: #4361ee;
-            margin-right: 10px;
-        }
-        .stage-header {
-            display: flex;
-            align-items: center;
             margin-bottom: 15px;
         }
+
         .downloads-container {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: 15px;
+            display: none;
+            margin-top: 25px;
         }
-        .status-badge {
-            margin-left: auto;
-            font-size: 14px;
+
+        .file-info {
+            margin-bottom: 20px;
         }
     </style>
 </head>
+
 <body>
     <div class="processing-container">
-        <h3 class="text-center mb-4"><i class="fas fa-headphones me-2"></i>Audio Processing</h3>
-        
-        <!-- Stage 1 -->
-        <div class="stage" id="stage1">
-            <div class="stage-header">
-                <i class="fas fa-cogs processing-icon fa-spin"></i>
-                <h5>Stage 1: Speaker Analysis</h5>
-                <span class="badge bg-primary status-badge">Processing</span>
-            </div>
-            <p class="text-muted">Identifying speakers and their segments...</p>
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
-            </div>
-            <div class="downloads-container" id="stage1Downloads" style="display:none;">
-                <button class="btn btn-download">
-                    <i class="fas fa-download me-1"></i> SID_001.csv (Speaker ID)
-                </button>
-                <button class="btn btn-download">
-                    <i class="fas fa-download me-1"></i> SD_001.csv (Diarization)
-                </button>
-            </div>
+        <div class="processing-icon">
+            <i class="fas fa-cogs fa-spin"></i>
         </div>
-        
-        <!-- Stage 2 -->
-        <div class="stage" id="stage2">
-            <div class="stage-header">
-                <i class="fas fa-language processing-icon"></i>
-                <h5>Stage 2: Language Processing</h5>
-                <span class="badge bg-secondary status-badge">Pending</span>
-            </div>
-            <p class="text-muted">Identifying languages and transcribing speech...</p>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-            </div>
-            <div class="downloads-container" id="stage2Downloads" style="display:none;">
-                <button class="btn btn-download">
-                    <i class="fas fa-download me-1"></i> LID_001.csv (Language ID)
-                </button>
-                <button class="btn btn-download">
-                    <i class="fas fa-download me-1"></i> ASR_001.trn (Transcription)
-                </button>
-            </div>
+        <h4>Processing Your File</h4>
+
+        <div class="file-info">
+            <div><strong>File:</strong> <span id="fileName">-</span></div>
+            <div><strong>Status:</strong> <span id="fileStatus">Starting...</span></div>
         </div>
-        
-        <!-- Stage 3 -->
-        <div class="stage" id="stage3">
-            <div class="stage-header">
-                <i class="fas fa-exchange-alt processing-icon"></i>
-                <h5>Stage 3: Translation</h5>
-                <span class="badge bg-secondary status-badge">Pending</span>
-            </div>
-            <p class="text-muted">Translating to English...</p>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-            </div>
-            <div class="downloads-container" id="stage3Downloads" style="display:none;">
-                <button class="btn btn-download">
-                    <i class="fas fa-download me-1"></i> NMT_001.txt (Translation)
-                </button>
-            </div>
+
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" role="progressbar"
+                style="width: 0%"></div>
+        </div>
+
+        <div id="processingMessage">Preparing your file for processing...</div>
+
+        <div class="downloads-container" id="downloadsContainer">
+            <h5 class="mb-3">Your file is ready!</h5>
+            <button class="btn btn-download" id="finalDownloadBtn">
+                <i class="fas fa-download me-1"></i> Download Final Output
+            </button>
+            <button class="btn btn-download" id="transcriptDownloadBtn">
+                <i class="fas fa-download me-1"></i> Download Transcript
+            </button>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Stage 1 Processing
-            const stage1Progress = document.querySelector('#stage1 .progress-bar');
-            const stage1Icon = document.querySelector('#stage1 .processing-icon');
-            const stage1Status = document.querySelector('#stage1 .status-badge');
-            
-            // Stage 2 Elements
-            const stage2Progress = document.querySelector('#stage2 .progress-bar');
-            const stage2Icon = document.querySelector('#stage2 .processing-icon');
-            const stage2Status = document.querySelector('#stage2 .status-badge');
-            
-            // Stage 3 Elements
-            const stage3Progress = document.querySelector('#stage3 .progress-bar');
-            const stage3Icon = document.querySelector('#stage3 .processing-icon');
-            const stage3Status = document.querySelector('#stage3 .status-badge');
-            
-            // Simulate Stage 1 processing
-            let progress1 = 0;
-            const interval1 = setInterval(() => {
-                progress1 += Math.random() * 10;
-                if (progress1 >= 100) {
-                    progress1 = 100;
-                    clearInterval(interval1);
-                    
-                    // Complete Stage 1
-                    setTimeout(() => {
-                        stage1Icon.classList.remove('fa-spin');
-                        stage1Icon.className = 'fas fa-check-circle processing-icon';
-                        stage1Status.className = 'badge bg-success status-badge';
-                        stage1Status.textContent = 'Complete';
-                        document.querySelector('#stage1 p').textContent = 'Speaker analysis completed.';
-                        document.querySelector('#stage1Downloads').style.display = 'flex';
-                        
-                        // Start Stage 2
-                        stage2Icon.classList.add('fa-spin');
-                        stage2Status.className = 'badge bg-primary status-badge';
-                        stage2Status.textContent = 'Processing';
-                        simulateStage2();
-                    }, 500);
-                }
-                stage1Progress.style.width = progress1 + '%';
-            }, 500);
-            
-            function simulateStage2() {
-                let progress2 = 0;
-                const interval2 = setInterval(() => {
-                    progress2 += Math.random() * 8;
-                    if (progress2 >= 100) {
-                        progress2 = 100;
-                        clearInterval(interval2);
-                        
-                        // Complete Stage 2
-                        setTimeout(() => {
-                            stage2Icon.classList.remove('fa-spin');
-                            stage2Icon.className = 'fas fa-check-circle processing-icon';
-                            stage2Status.className = 'badge bg-success status-badge';
-                            stage2Status.textContent = 'Complete';
-                            document.querySelector('#stage2 p').textContent = 'Language processing completed.';
-                            document.querySelector('#stage2Downloads').style.display = 'flex';
-                            
-                            // Start Stage 3
-                            stage3Icon.classList.add('fa-spin');
-                            stage3Status.className = 'badge bg-primary status-badge';
-                            stage3Status.textContent = 'Processing';
-                            simulateStage3();
-                        }, 500);
-                    }
-                    stage2Progress.style.width = progress2 + '%';
-                }, 500);
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get elements
+            const progressBar = document.getElementById('progressBar');
+            const processingIcon = document.querySelector('.processing-icon i');
+            const processingMessage = document.getElementById('processingMessage');
+            const fileNameElement = document.getElementById('fileName');
+            const fileStatusElement = document.getElementById('fileStatus');
+            const downloadsContainer = document.getElementById('downloadsContainer');
+            const finalDownloadBtn = document.getElementById('finalDownloadBtn');
+            const transcriptDownloadBtn = document.getElementById('transcriptDownloadBtn');
+
+            // Get file ID from URL or use default
+            const fileId = window.location.pathname?.split("/")[2] || '4567890'; // Default for demo
+
+            // Status messages
+            const statusMessages = [
+                "Starting processing...",
+                "Identifying speakers...",
+                "Separating speaker segments...",
+                "Detecting languages...",
+                "Transcribing speech...",
+                "Translating content...",
+                "Finalizing output..."
+            ];
+
+            // // Check file status
+            // async function checkFileStatus() {
+            //     // In a real app, this would fetch from your API
+            //     // For demo, we'll simulate progress
+            //     simulateProcessing();
+
+            //     // Real API call would look like this:
+
+
+            // }
+
+            // Simulate processing for demo
+            function updateUI(fileData) {
+                console.log("File Data:", statusMessages[fileData.status]);
+                // processingMessage.textContent = statusMessages[fileData.status];
+
+
             }
-            
-            function simulateStage3() {
-                let progress3 = 0;
-                const interval3 = setInterval(() => {
-                    progress3 += Math.random() * 6;
-                    if (progress3 >= 100) {
-                        progress3 = 100;
-                        clearInterval(interval3);
-                        
-                        // Complete Stage 3
-                        setTimeout(() => {
-                            stage3Icon.classList.remove('fa-spin');
-                            stage3Icon.className = 'fas fa-check-circle processing-icon';
-                            stage3Status.className = 'badge bg-success status-badge';
-                            stage3Status.textContent = 'Complete';
-                            document.querySelector('#stage3 p').textContent = 'Translation completed.';
-                            document.querySelector('#stage3Downloads').style.display = 'flex';
-                        }, 500);
+            function simulateProcessing() {
+                let progress = 0;
+                let statusIndex = 0;
+
+                const interval = setInterval(() => {
+                    // Update progress
+                    progress += Math.random() * 10;
+                    if (progress >= 100) progress = 100;
+                    progressBar.style.width = progress + '%';
+
+                    // Update status message periodically
+                    if (progress % 20 < 5 && statusIndex < statusMessages.length - 1) {
+                        statusIndex++;
+                        processingMessage.textContent = statusMessages[statusIndex];
                     }
-                    stage3Progress.style.width = progress3 + '%';
-                }, 500);
+
+                    // When complete
+                    if (progress >= 100) {
+                        progress = 0
+                    }
+                    fetch(`http://localhost:5000/files/${fileId}`, {
+                        method: 'GET',
+                        headers: { 'accept': 'application/json' }
+                    })
+                        .then(response => response.json())
+                        .then(async (data) => await updateUI(data))
+                        .catch(error => console.error('Error:', error));
+                }, 5000);
             }
-            
-            // Download button functionality
-            document.querySelectorAll('.btn-download').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const filename = this.textContent.trim().split(' ')[0];
-                    alert(`Downloading ${filename}...`);
-                    // In a real app, this would trigger a file download
-                });
+
+            // When processing is complete
+            function processingComplete() {
+                // Update UI
+                processingIcon.className = 'fas fa-check-circle';
+                processingMessage.textContent = "Processing complete!";
+                fileStatusElement.textContent = "Ready for download";
+                progressBar.className = 'progress-bar bg-success'; // Change to solid green
+
+                // Show download buttons
+                downloadsContainer.style.display = 'block';
+
+                // Set file info (in real app this would come from API)
+                fileNameElement.textContent = "output_cropped.wav";
+            }
+
+            // Download button handlers
+            finalDownloadBtn.addEventListener('click', function () {
+                alert('Downloading final output file...');
+                // In real app: window.location.href = fileData.url;
             });
+
+            transcriptDownloadBtn.addEventListener('click', function () {
+                alert('Downloading transcript file...');
+                // In real app: window.location.href = transcriptUrl;
+            });
+
+            // Start checking status
+            simulateProcessing();
         });
     </script>
 </body>
+
 </html>
