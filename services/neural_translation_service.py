@@ -80,4 +80,4 @@ def neural_translation_service(file_id: str):
     # Save translated JSON
     with open(translation_output_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print("neural_translation_service ---------------- START")
+    print("neural_translation_service ---------------- END")

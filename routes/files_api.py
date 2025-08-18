@@ -12,6 +12,8 @@ from services.speaker_diarization_service import speaker_diarization_service
 from services.speaker_identification_service import speaker_identification_service
 from services.speech_recognition_service import speech_recognition_service
 from services.neural_translation_service import neural_translation_service
+from services.mian_thread import main_thread
+# Define the API namespace
 
 ns = Namespace('files', description='File operations')
 
@@ -171,3 +173,45 @@ class NeuralTranslation(Resource):
 #             path=os.path.basename(file['url']),
 #             as_attachment=True
 #         )
+
+
+@ns.route('/upload-file-working')
+class FileUpload(Resource):
+    @ns.expect(upload_parser)
+    @ns.marshal_with(file_model, code=201)
+    @ns.response(400, 'Bad request')
+    def post(self):
+        args = upload_parser.parse_args()
+        uploaded_file = args['file']
+        file_id = str(uuid.uuid4())
+
+        AUDIO_FILE = os.getenv('AUDIO_FILE', 'audio-file')
+        folder_path = os.path.join('uploads', file_id)
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Extract original file extension (lowercase)
+        _, ext = os.path.splitext(uploaded_file.filename)
+        ext = ext.lower()
+
+        # Create final file name with extension
+        final_filename = f"{AUDIO_FILE}{ext}"
+
+        # Get the local path to save the file
+        local_path=os.path.join(folder_path,secure_filename(final_filename))
+        
+        uploaded_file.save(local_path)
+
+        # Store file info (including name with extension)
+        new_file = {
+            'id': file_id,
+            'filename': final_filename,  # store uuid + extension
+            'status': 1,
+        }
+
+        files = load_files()
+        files.append(new_file)
+        save_files(files)
+        
+        thread = threading.Thread(target=main_thread, args=(file_id,))
+        thread.start()
+        return new_file, 201

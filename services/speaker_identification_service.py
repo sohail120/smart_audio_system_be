@@ -55,9 +55,9 @@ def _load_speechbrain_encoder(hf_token: str, device: str = "cpu", savedir: str =
     try:
         encoder = EncoderClassifier.from_hparams(
             source="speechbrain/spkrec-ecapa-voxceleb",
-            run_opts=run_opts,
-            savedir=savedir,
-            use_auth_token=hf_token if hf_token else None
+            # run_opts=run_opts,
+            # savedir="pretrained_models/spkrec-ecapa-voxceleb,
+            use_auth_token=hf_token
         )
     except TypeError:
         # Some older versions might not accept use_auth_token kw; try without it

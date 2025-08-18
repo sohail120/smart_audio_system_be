@@ -15,7 +15,8 @@ flask db upgrade
 
 
 docker build -t smart_audio_system_be .
-
+docker build -t my-python-app .
+docker run -d -p 5000:5000 my-python-app
 
 
  
