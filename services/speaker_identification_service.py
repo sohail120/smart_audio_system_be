@@ -183,22 +183,16 @@ def match_segments_to_enrolment(audio_file_path: str, rttm_file: str, hf_token: 
     return results
 
 # ===== Main Service =====
-def speaker_identification_service(file_id: str):
-    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
+def speaker_identification_service(folder_path: str,final_filename:str):
+    print("speaker_identification_service---------------- START")
+
     HF_TOKEN = os.getenv('HF_TOKEN', None)
     DIARIZATION_FILE = os.getenv('DIARIZATION_FILE', 'audio-file.rttm')
-    ENROLMENT_FILE = os.getenv('ENROLMENT_FILE', "uploads/enrolment.json")
-
+    ENROLMENT_FILE = os.getenv('ENROLMENT_FILE', f"{folder_path}/enrolment.json")
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-    print("speaker_identification_service---------------- START")
-    files = load_files()
-    file_index = next((i for i, f in enumerate(files) if f['id'] == file_id), None)
-    if file_index is None:
-        raise ValueError(f"File ID {file_id} not found.")
-
-    rttm_file = f"{UPLOAD_FOLDER}/{file_id}/{DIARIZATION_FILE}"
-    audio_file_path = os.path.join(f"{UPLOAD_FOLDER}/{file_id}/", files[file_index]['filename'])
+    rttm_file = f"{folder_path}/{DIARIZATION_FILE}"
+    audio_file_path = os.path.join(f"{folder_path}/", final_filename)
 
     enrolment_data = load_files(ENROLMENT_FILE)
     if not enrolment_data:

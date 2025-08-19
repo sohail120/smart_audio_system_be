@@ -3,15 +3,14 @@ import csv
 import os
 
 def file_converter_service(
-  file_id: str,
+  folder_path: str,
 ):
-    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
     TRANSCRIPTION = os.getenv('TRANSCRIPTION', "transcription.json")
     NEURAL_TRANSLATION = os.getenv('NEURAL_TRANSLATION', "neural_translation.json")
 
-    transcription_path = f'{UPLOAD_FOLDER}/{file_id}/{TRANSCRIPTION}'
-    translation_path = f'{UPLOAD_FOLDER}/{file_id}/{NEURAL_TRANSLATION}'
-    output_dir = f'{UPLOAD_FOLDER}/{file_id}/converted_files'
+    transcription_path = f'{folder_path}/{TRANSCRIPTION}'
+    translation_path = f'{folder_path}/{NEURAL_TRANSLATION}'
+    output_dir = f'{folder_path}/converted_files'
     os.makedirs(output_dir, exist_ok=True)
     """
     Converts transcription and translation JSON files into various CSV and text formats.

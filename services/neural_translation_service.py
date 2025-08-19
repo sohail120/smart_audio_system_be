@@ -35,7 +35,7 @@ def _ms_to_srt(milliseconds):
     hours, minutes = divmod(minutes, 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d},{ms:03d}"
 
-def neural_translation_service(file_id: str):
+def neural_translation_service(folder_path: str):
     print("neural_translation_service ---------------- START")
     """Translates transcription JSON to English and saves translated JSON."""
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
@@ -43,8 +43,8 @@ def neural_translation_service(file_id: str):
     NEURAL_TRANSLATION = os.getenv('NEURAL_TRANSLATION', "neural_translation.json")
     HF_TOKEN = os.getenv('HF_TOKEN', None)
 
-    transcription_path = f'{UPLOAD_FOLDER}/{file_id}/{TRANSCRIPTION}'
-    translation_output_path = f'{UPLOAD_FOLDER}/{file_id}/{NEURAL_TRANSLATION}'
+    transcription_path = f'{folder_path}/{TRANSCRIPTION}'
+    translation_output_path = f'{folder_path}/{NEURAL_TRANSLATION}'
 
     if not os.path.exists(transcription_path):
         raise FileNotFoundError(f"Transcription file not found: {transcription_path}")
