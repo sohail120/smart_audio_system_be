@@ -2,10 +2,13 @@ import os
 import json  # Ad
 import os
 import json
-from config import  ALLOWED_EXTENSIONS ,JSON_STORAGE
 from pydub import AudioSegment
 import shutil
 
+ALLOWED_EXTENSIONS = set(os.getenv('ALLOWED_EXTENSIONS', 'mp3,wav').split(','))
+
+# Get JSON storage folder path
+JSON_STORAGE = os.getenv('JSON_STORAGE', 'storage/json')
 
 # Helper Functions
 def load_files(JSON_STORAGE=JSON_STORAGE):
